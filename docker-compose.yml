@@ -36,7 +36,7 @@ services:
       - sonarr
       - plex
     networks:
-      - ${PROXY_NETWORK_NAME}
+      - base-network
   # END OMBI
   # START SONARR
   sonarr:
@@ -59,7 +59,7 @@ services:
       - jackett
       - transmission
     networks:
-      - ${PROXY_NETWORK_NAME}
+      - base-network
   # END SONARR
   # START RADARR
   radarr:
@@ -82,7 +82,7 @@ services:
       - jackett
       - transmission
     networks:
-      - ${PROXY_NETWORK_NAME}
+      - base-network
   # END RADARR
   # START NZBGet
   nzbget:
@@ -99,7 +99,7 @@ services:
       - ${VOLUMES_PATH}/nzbget/downloads:/downloads
     restart: unless-stopped
     networks:
-      - ${PROXY_NETWORK_NAME}
+      - base-network
   # END NZBGet
   # START TRANSMISSION+OPENVPN
   transmission:
@@ -140,7 +140,7 @@ services:
       - NET_ADMIN
     restart: unless-stopped
     networks:
-      - ${PROXY_NETWORK_NAME}
+      - base-network
   # END TRANSMISSION+OPENVPN
   # START JACKET
   jackett:
@@ -156,7 +156,7 @@ services:
       - ${VOLUMES_PATH}/jackett:/config
       - ${VOLUMES_PATH}/transmission/downloads:/downloads
     networks:
-      - ${PROXY_NETWORK_NAME}
+      - base-network
     restart: unless-stopped
   # END JACKET
   # START TAUTULLI
@@ -174,8 +174,25 @@ services:
       - '${VOLUMES_PATH}/plex/library/Library/Application\ Support/Plex\ Media\ Server/Logs/:/logs'
     restart: unless-stopped
     networks:
-      - ${PROXY_NETWORK_NAME}
+      - base-network
   # END TATULLI
+  # START crondocker
+  crondocker:
+    build: ./crondocker
+    image: crondocker-muyflix
+    network_mode: host
+    volumes:
+      - "./crondocker/crontab:/crontab"
+      - "${MEDIA_PATH}:/media"
+      - "${LOGS_PATH}:/logs"
+      - "${VOLUMES_PATH}/ghpotos-sync:/gphotos-sync"
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /usr/bin/docker:/usr/bin/docker
+    environment:
+      SLACK_SERVICE_PATH: ${SLACK_SERVICE_PATH}
+      RADARR_API_KEY: ${RADARR_API_KEY}
+      SONARR_API_KEY: ${SONARR_API_KEY}
+  # END crondocker
 networks:
-  ${PROXY_NETWORK_NAME}:
+  base-network:
     external: true
