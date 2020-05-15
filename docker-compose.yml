@@ -1,0 +1,181 @@
+version: "3"
+services:
+  # START PLEX
+  plex:
+    image: linuxserver/plex:latest
+    network_mode: host
+    environment:
+      PUID: 1000
+      PGID: 1000
+      VERSION: 1.19.1.2701-6327e27bf
+      UMASK_SET: 022 #optional
+    volumes:
+      - ${VOLUMES_PATH}/plex/library:/config
+      - ${MEDIA_PATH}/tv:/data/tvshows
+      - ${MEDIA_PATH}/movies:/data/movies
+      - ${MEDIA_PATH}/music:/data/music
+      - ${MEDIA_PATH}/photos:/data/photos
+      - ${VOLUMES_PATH}/plex/transcode:/transcode
+    restart: unless-stopped
+  # END PLEX
+  # START OMBI
+  ombi:
+    image: linuxserver/ombi:latest
+    environment:
+      PUID: 1000
+      PGID: 1000
+      TZ: Europe/London
+      VIRTUAL_HOST: ombi.${TLD}
+      LETSENCRYPT_HOST: ombi.${TLD}
+      VIRTUAL_PORT: 3579
+    volumes:
+      - ${VOLUMES_PATH}/ombi:/config
+    restart: unless-stopped
+    depends_on:
+      - radarr
+      - sonarr
+      - plex
+    networks:
+      - ${PROXY_NETWORK_NAME}
+  # END OMBI
+  # START SONARR
+  sonarr:
+    image: linuxserver/sonarr:latest
+    environment:
+      PUID: 1000
+      PGID: 1000
+      TZ: Europe/Zurich
+      VIRTUAL_HOST: sonarr.${TLD}
+      LETSENCRYPT_HOST: sonarr.${TLD}
+      VIRTUAL_PORT: 8989
+    volumes:
+      - ${VOLUMES_PATH}/sonarr/:/config
+      - ${MEDIA_PATH}/tv/:/tv
+      - ${VOLUMES_PATH}/nzbget/downloads:/downloads
+      - ${VOLUMES_PATH}/transmission/downloads:/downloads-transmission
+    restart: unless-stopped
+    depends_on:
+      - nzbget
+      - jackett
+      - transmission
+    networks:
+      - ${PROXY_NETWORK_NAME}
+  # END SONARR
+  # START RADARR
+  radarr:
+    image: linuxserver/radarr:latest
+    environment:
+      PUID: 1000
+      PGID: 1000
+      TZ: Europe/Zurich
+      VIRTUAL_HOST: radarr.${TLD}
+      LETSENCRYPT_HOST: radarr.${TLD}
+      VIRTUAL_PORT: 7878
+    volumes:
+      - ${VOLUMES_PATH}/radarr/:/config
+      - ${MEDIA_PATH}/movies/:/movies
+      - ${VOLUMES_PATH}/nzbget/downloads:/downloads
+      - ${VOLUMES_PATH}/transmission/downloads:/downloads-transmission
+    restart: unless-stopped
+    depends_on:
+      - nzbget
+      - jackett
+      - transmission
+    networks:
+      - ${PROXY_NETWORK_NAME}
+  # END RADARR
+  # START NZBGet
+  nzbget:
+    image: linuxserver/nzbget:latest
+    environment:
+      PUID: 1000
+      PGID: 1000
+      TZ: Europe/Zurich
+      VIRTUAL_HOST: nzbget.${TLD}
+      LETSENCRYPT_HOST: nzbget.${TLD}
+      VIRTUAL_PORT: 6789
+    volumes:
+      - ${VOLUMES_PATH}/nzbget/config:/config
+      - ${VOLUMES_PATH}/nzbget/downloads:/downloads
+    restart: unless-stopped
+    networks:
+      - ${PROXY_NETWORK_NAME}
+  # END NZBGet
+  # START TRANSMISSION+OPENVPN
+  transmission:
+    image: haugene/transmission-openvpn:latest
+    environment:
+      PUID: 1000
+      PGID: 1000
+      TRANSMISSION_WEB_UI: transmission-web-control
+      CREATE_TUN_DEVICE: "true"
+      OPENVPN_PROVIDER: PIA
+      OPENVPN_CONFIG: CA\ Toronto
+      OPENVPN_USERNAME: ${OPENVPN_USER}
+      OPENVPN_PASSWORD: ${OPENVPN_PW}
+      WEBPROXY_ENABLED: "false"
+      TRANSMISSION_DOWNLOAD_DIR: /downloads-transmission/completed
+      TRANSMISSION_INCOMPLETE_DIR: /downloads-transmission/incomplete
+      LOCAL_NETWORK: 192.168.86.0/24
+      TRANSMISSION_RATIO_LIMIT: 0.1
+      TRANSMISSION_RATIO_LIMIT_ENABLED: "true"
+      TRANSMISSION_ALT_SPEED_DOWN: 0
+      TRANSMISSION_ALT_SPEED_UP: 0
+      TRANSMISSION_ALT_SPEED_TIME_ENABLED: "false"
+      TRANSMISSION_ALT_SPEED_TIME_BEGIN: 540
+      TRANSMISSION_ALT_SPEED_TIME_END: 1380
+      TRANSMISSION_UTP_ENABLED: "false"
+      TRANSMISSION_DOWNLOAD_QUEUE_ENABLED: "true"
+      TRANSMISSION_DOWNLOAD_QUEUE_SIZE: 20
+      VIRTUAL_HOST: transmission.${TLD}
+      LETSENCRYPT_HOST: transmission.${TLD}
+      VIRTUAL_PORT: 9091
+    volumes:
+      - ${VOLUMES_PATH}/transmission/config:/data
+      - ${VOLUMES_PATH}/transmission/downloads:/downloads-transmission
+      - /etc/localtime:/etc/localtime:ro
+    ports:
+      - "31189:31189"
+    cap_add:
+      - NET_ADMIN
+    restart: unless-stopped
+    networks:
+      - ${PROXY_NETWORK_NAME}
+  # END TRANSMISSION+OPENVPN
+  # START JACKET
+  jackett:
+    image: linuxserver/jackett:latest
+    environment:
+      PGID: 1000
+      PUID: 1000
+      TZ: Europe/Zurich
+      VIRTUAL_HOST: jackett.${TLD}
+      LETSENCRYPT_HOST: jackett.${TLD}
+      VIRTUAL_PORT: 9117
+    volumes:
+      - ${VOLUMES_PATH}/jackett:/config
+      - ${VOLUMES_PATH}/transmission/downloads:/downloads
+    networks:
+      - ${PROXY_NETWORK_NAME}
+    restart: unless-stopped
+  # END JACKET
+  # START TAUTULLI
+  tautulli:
+    image: linuxserver/tautulli:latest
+    environment:
+      PUID: 1000
+      PGID: 1000
+      TZ: Europe/London
+      VIRTUAL_HOST: tautulli.${TLD}
+      LETSENCRYPT_HOST: tautulli.${TLD}
+      VIRTUAL_PORT: 8181
+    volumes:
+      - ${VOLUMES_PATH}/tautulli:/config
+      - '${VOLUMES_PATH}/plex/library/Library/Application\ Support/Plex\ Media\ Server/Logs/:/logs'
+    restart: unless-stopped
+    networks:
+      - ${PROXY_NETWORK_NAME}
+  # END TATULLI
+networks:
+  ${PROXY_NETWORK_NAME}:
+    external: true
