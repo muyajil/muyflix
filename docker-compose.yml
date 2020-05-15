@@ -181,6 +181,7 @@ services:
     build: ./crondocker
     image: crondocker-muyflix
     network_mode: host
+    user: 1000:1000
     volumes:
       - "./crondocker/crontab:/crontab"
       - "${MEDIA_PATH}:/media"
