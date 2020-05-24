@@ -7,7 +7,7 @@ services:
     environment:
       PUID: 1000
       PGID: 1000
-      VERSION: 1.19.3.2764-ef515a800
+      VERSION: 1.19.3.2843-e3c1f7bcd
       UMASK_SET: 022 #optional
     volumes:
       - ${VOLUMES_PATH}/plex/library:/config
@@ -48,6 +48,8 @@ services:
       VIRTUAL_HOST: sonarr.${TLD}
       LETSENCRYPT_HOST: sonarr.${TLD}
       VIRTUAL_PORT: 8989
+    ports:
+      - "8989:8989"
     volumes:
       - ${VOLUMES_PATH}/sonarr/:/config
       - ${MEDIA_PATH}/tv/:/tv
@@ -71,6 +73,8 @@ services:
       VIRTUAL_HOST: radarr.${TLD}
       LETSENCRYPT_HOST: radarr.${TLD}
       VIRTUAL_PORT: 7878
+    ports:
+      - "7878:7878"
     volumes:
       - ${VOLUMES_PATH}/radarr/:/config
       - ${MEDIA_PATH}/movies/:/movies
