@@ -1,4 +1,4 @@
-version: "3"
+version: "2.4"
 services:
   # START PLEX
   plex:
@@ -184,10 +184,7 @@ services:
   muyflix-transcoder:
     image: muyajil/muyflix-transcoder:latest
     user: 1000:1000
-    deploy:
-      resources:
-        limits:
-          cpus: '5'
+    cpuset: 0,1,2,3,4
     volumes:
       - ${MEDIA_PATH}:${MEDIA_PATH}
       - ${LOG_FILE_PATH}:/log.csv
