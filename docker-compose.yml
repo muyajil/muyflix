@@ -181,7 +181,7 @@ services:
       - base-network
   # END TATULLI
   # START MUYFLIX-TRANSCODER
-  muyflix-transcoder:
+  transcoder:
     image: muyajil/muyflix-transcoder:latest
     user: 1000:1000
     cpuset: 0,1,2,3,4
