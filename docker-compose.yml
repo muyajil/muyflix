@@ -176,24 +176,25 @@ services:
     networks:
       - base-network
   # END TATULLI
-  # START crondocker
+  # START MUYFLIX-TRANSCODER
   crondocker:
-    build: ./crondocker
-    image: crondocker-muyflix
-    network_mode: host
+    image: muyajil/muyflix-transcoder:latest
     user: 1000:1000
+    resources:
+      limits:
+        cpus: '5'
     volumes:
-      - "./crondocker/crontab:/crontab"
-      - "${MEDIA_PATH}:/media"
-      - "${LOGS_PATH}:/logs"
-      - "${VOLUMES_PATH}/ghpotos-sync:/gphotos-sync"
-      - /var/run/docker.sock:/var/run/docker.sock
-      - /usr/bin/docker:/usr/bin/docker
+      - ${MEDIA_PATH}:${MEDIA_PATH}
+      - ${LOG_FILE_PATH}:/log.csv
     environment:
-      SLACK_SERVICE_PATH: ${SLACK_SERVICE_PATH}
+      ROOT_DIR: ${MEDIA_PATH}
+      RADARR_API_ROOT: ${RADARR_API_ROOT}
       RADARR_API_KEY: ${RADARR_API_KEY}
-      SONARR_API_KEY: ${SONARR_API_KEY}
-  # END crondocker
+      LOG_FILE_PATH: /log.csv
+      TIMEOUT_MINS: 1
+    networks:
+      - base-network
+  # END MUYFLIX-TRANSCODER
 networks:
   base-network:
     external: true
