@@ -88,6 +88,28 @@ services:
     networks:
       - base-network
   # END RADARR
+  # START BAZARR
+  bazarr:
+    image: linuxserver/bazarr:latest
+    environment:
+      PUID: 1000
+      PGID: 1000
+      TZ: Europe/Zurich
+      VIRTUAL_HOST: bazarr.srv.ajil.ch
+      LETSENCRYPT_HOST: bazarr.srv.ajil.ch
+      PROXY_LOCATION: bazarr
+      VIRTUAL_PORT: 6767
+    volumes:
+      - ${VOLUMES_PATH}/bazarr/config:/config
+      - ${MEDIA_PATH}/movies:/movies
+      - ${MEDIA_PATH}/tv:/tv
+    restart: unless-stopped
+    depends_on:
+      - radarr
+      - sonarr
+    networks:
+      - base-network
+  # END BAZARR
   # START NZBGet
   nzbget:
     image: linuxserver/nzbget:latest
