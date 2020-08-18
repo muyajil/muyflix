@@ -188,6 +188,8 @@ services:
     volumes:
       - ${MEDIA_PATH}:${MEDIA_PATH}
       - ${LOG_FILE_PATH}:/log.csv
+    ports:
+      - "5800:5800"
     environment:
       ROOT_DIR: ${MEDIA_PATH}
       RADARR_API_ROOT: ${RADARR_API_ROOT}
