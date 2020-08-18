@@ -218,6 +218,7 @@ services:
       RADARR_API_KEY: ${RADARR_API_KEY}
       LOG_FILE_PATH: /log.csv
       TIMEOUT_MINS: 1
+      PYTHONUNBUFFERED: 1
     restart: unless-stopped
     networks:
       - base-network
