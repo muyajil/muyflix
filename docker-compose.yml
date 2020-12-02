@@ -136,7 +136,7 @@ services:
       TRANSMISSION_WEB_UI: transmission-web-control
       CREATE_TUN_DEVICE: "true"
       OPENVPN_PROVIDER: PIA
-      OPENVPN_CONFIG: Switzerland
+      OPENVPN_CONFIG: switzerland
       OPENVPN_USERNAME: ${OPENVPN_USER}
       OPENVPN_PASSWORD: ${OPENVPN_PW}
       WEBPROXY_ENABLED: "false"
