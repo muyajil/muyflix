@@ -139,6 +139,9 @@ services:
       OPENVPN_CONFIG: switzerland
       OPENVPN_USERNAME: ${OPENVPN_USER}
       OPENVPN_PASSWORD: ${OPENVPN_PW}
+      OPENVPN_OPTS: "--inactive 3600 --ping 10 --ping-exit 60"
+      OVERRIDE_DNS_1: 8.8.8.8
+      OVERRIDE_DNS_2: 8.8.4.4
       WEBPROXY_ENABLED: "false"
       TRANSMISSION_DOWNLOAD_DIR: /downloads-transmission/completed
       TRANSMISSION_INCOMPLETE_DIR: /downloads-transmission/incomplete
