@@ -7,7 +7,7 @@ services:
     environment:
       PUID: 1000
       PGID: 1000
-      VERSION: 1.30.0.6486-629d58034
+      VERSION: 1.31.2.6810-a607d384f
       UMASK_SET: 022 #optional
     volumes:
       - ${VOLUMES_PATH}/plex/library:/config
