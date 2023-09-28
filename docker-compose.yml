@@ -188,23 +188,6 @@ services:
       - base-network
     restart: unless-stopped
   # END JACKET
-  # START TAUTULLI
-  tautulli:
-    image: linuxserver/tautulli:latest
-    environment:
-      PUID: 1000
-      PGID: 1000
-      TZ: Europe/London
-      VIRTUAL_HOST: tautulli.${TLD}
-      LETSENCRYPT_HOST: tautulli.${TLD}
-      VIRTUAL_PORT: 8181
-    volumes:
-      - ${VOLUMES_PATH}/tautulli:/config
-      - '${VOLUMES_PATH}/plex/library/Library/Application\ Support/Plex\ Media\ Server/Logs/:/logs'
-    restart: unless-stopped
-    networks:
-      - base-network
-  # END TATULLI
   # START MUYFLIX-TRANSCODER
   transcoder:
     image: muyajil/muyflix-transcoder:latest
