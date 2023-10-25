@@ -18,26 +18,47 @@ services:
       - ${VOLUMES_PATH}/plex/transcode:/transcode
     restart: unless-stopped
   # END PLEX
-  # START OMBI
-  ombi:
-    image: linuxserver/ombi:latest
+  # # START OMBI
+  # ombi:
+  #   image: linuxserver/ombi:latest
+  #   environment:
+  #     PUID: 1000
+  #     PGID: 1000
+  #     TZ: Europe/London
+  #     VIRTUAL_HOST: ombi.${TLD}
+  #     LETSENCRYPT_HOST: ombi.${TLD}
+  #     VIRTUAL_PORT: 3579
+  #   volumes:
+  #     - ${VOLUMES_PATH}/ombi:/config
+  #   restart: unless-stopped
+  #   depends_on:
+  #     - radarr
+  #     - sonarr
+  #     - plex
+  #   networks:
+  #     - base-network
+  # # END OMBI
+  # START OVERSEERR
+  overseerr:
+    image: lscr.io/linuxserver/overseerr:latest
     environment:
       PUID: 1000
       PGID: 1000
-      TZ: Europe/London
-      VIRTUAL_HOST: ombi.${TLD}
-      LETSENCRYPT_HOST: ombi.${TLD}
-      VIRTUAL_PORT: 3579
-    volumes:
-      - ${VOLUMES_PATH}/ombi:/config
+      LOG_LEVEL: debug
+      TZ: Eruope/Zurich
+      VIRTUAL_HOST: overseerr.${TLD},ombi.${TLD}
+      LETSENCRYPT_HOST: overseerr.${TLD},ombi.${TLD}
+      VIRTUAL_PORT: 5055
     restart: unless-stopped
+    volumes:
+      - ${VOLUMES_PATH}/overseerr:/config
     depends_on:
       - radarr
       - sonarr
       - plex
     networks:
       - base-network
-  # END OMBI
+  # END OVERSEERR
   # START SONARR
   sonarr:
     image: linuxserver/sonarr:latest
