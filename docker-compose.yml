@@ -18,26 +18,6 @@ services:
       - ${VOLUMES_PATH}/plex/transcode:/transcode
     restart: unless-stopped
   # END PLEX
-  # # START OMBI
-  # ombi:
-  #   image: linuxserver/ombi:latest
-  #   environment:
-  #     PUID: 1000
-  #     PGID: 1000
-  #     TZ: Europe/London
-  #     VIRTUAL_HOST: ombi.${TLD}
-  #     LETSENCRYPT_HOST: ombi.${TLD}
-  #     VIRTUAL_PORT: 3579
-  #   volumes:
-  #     - ${VOLUMES_PATH}/ombi:/config
-  #   restart: unless-stopped
-  #   depends_on:
-  #     - radarr
-  #     - sonarr
-  #     - plex
-  #   networks:
-  #     - base-network
-  # # END OMBI
   # START OVERSEERR
   overseerr:
     image: lscr.io/linuxserver/overseerr:latest
@@ -209,27 +189,42 @@ services:
       - base-network
     restart: unless-stopped
   # END JACKET
-  # START MUYFLIX-TRANSCODER
-  transcoder:
-    image: muyajil/muyflix-transcoder:latest
-    user: 1000:1000
-    cpuset: 0,1,2,3,4,5,6,7
-    volumes:
-      - ${MEDIA_PATH}:${MEDIA_PATH}
-      - ${LOG_FILE_PATH}:/log.csv
-    ports:
-      - "5800:5800"
-    environment:
-      ROOT_DIR: ${MEDIA_PATH}
-      RADARR_API_ROOT: ${RADARR_API_ROOT}
-      RADARR_API_KEY: ${RADARR_API_KEY}
-      LOG_FILE_PATH: /log.csv
-      TIMEOUT_MINS: 1
-      PYTHONUNBUFFERED: 1
+  # BEGIN TDARR
+  tdarr:
+    image: ghcr.io/haveagitgat/tdarr:latest
     restart: unless-stopped
+    # network_mode: bridge
+    ports:
+    #   - 8265:8265 # webUI port
+      - 8266:8266 # server port
+    cpuset: 0,1,2,3,4,5,6,7,8,9,10,11
+    environment:
+      TZ: Europe/London
+      PUID: 1000
+      PGID: 1000
+      UMASK_SET: 002
+      serverIP: 0.0.0.0
+      serverPort: 8266
+      webUIPort: 8265
+      internalNode: true
+      inContainer: true
+      nodeName: transcoder
+      # NVIDIA_DRIVER_CAPABILITIES=all
+      # NVIDIA_VISIBLE_DEVICES=all
+      VIRTUAL_HOST: tdarr.${TLD}
+      LETSENCRYPT_HOST: tdarr.${TLD}
+      VIRTUAL_PORT: 8265
+    volumes:
+      - ${VOLUMES_PATH}/tdarr/server:/app/server
+      - ${VOLUMES_PATH}/tdarr/configs:/app/configs
+      - ${VOLUMES_PATH}/tdarr/logs:/app/logs
+      - ${MEDIA_PATH}:/media
+      - ${VOLUMES_PATH}/tdarr/transcode_cache:/temp
+    # devices:
+    #   - /dev/dri:/dev/dri
     networks:
       - base-network
-  # END MUYFLIX-TRANSCODER
+  # END TDARR
 networks:
   base-network:
     external: true
