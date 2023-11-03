@@ -9,6 +9,8 @@ services:
       PGID: 1000
       VERSION: 1.32.7.7621-871adbd44
       UMASK_SET: 022 #optional
+    devices:
+      - /dev/dri:/dev/dri
     volumes:
       - ${VOLUMES_PATH}/plex/library:/config
       - ${MEDIA_PATH}/tv:/data/tvshows
@@ -209,8 +211,8 @@ services:
       internalNode: true
       inContainer: true
       nodeName: transcoder
-      # NVIDIA_DRIVER_CAPABILITIES=all
-      # NVIDIA_VISIBLE_DEVICES=all
+      NVIDIA_DRIVER_CAPABILITIES: all
+      NVIDIA_VISIBLE_DEVICES: all
       VIRTUAL_HOST: tdarr.${TLD}
       LETSENCRYPT_HOST: tdarr.${TLD}
       VIRTUAL_PORT: 8265
@@ -220,8 +222,9 @@ services:
       - ${VOLUMES_PATH}/tdarr/logs:/app/logs
       - ${MEDIA_PATH}:/media
       - ${VOLUMES_PATH}/tdarr/transcode_cache:/temp
-    # devices:
-    #   - /dev/dri:/dev/dri
+      - /lib/firmware/i915/:/lib/firmware/i915/
+    devices:
+      - /dev/dri:/dev/dri
     networks:
       - base-network
   # END TDARR
