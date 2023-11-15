@@ -210,7 +210,7 @@ services:
       webUIPort: 8265
       internalNode: true
       inContainer: true
-      nodeName: transcoder
+      nodeName: srv.ajil.ch
       NVIDIA_DRIVER_CAPABILITIES: all
       NVIDIA_VISIBLE_DEVICES: all
       VIRTUAL_HOST: tdarr.${TLD}
@@ -227,6 +227,8 @@ services:
       - /dev/dri:/dev/dri
     networks:
       - base-network
+    labels:
+      - "com.centurylinklabs.watchtower.enable=false"
   # END TDARR
 networks:
   base-network:
