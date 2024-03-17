@@ -7,7 +7,7 @@ services:
     environment:
       PUID: 1000
       PGID: 1000
-      VERSION: 1.32.7.7621-871adbd44
+      VERSION: 1.40.1.8227-c0dd5a73e
       UMASK_SET: 022 #optional
     devices:
       - /dev/dri:/dev/dri
