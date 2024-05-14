@@ -9,8 +9,8 @@ services:
       PGID: 1000
       VERSION: 1.40.2.8395-c67dce28e
       UMASK_SET: 022 #optional
-    devices:
-      - /dev/dri:/dev/dri
+#    devices:
+#      - /dev/dri:/dev/dri
     volumes:
       - ${VOLUMES_PATH}/plex/library:/config
       - ${MEDIA_PATH}/tv:/data/tvshows
@@ -223,8 +223,8 @@ services:
       - ${MEDIA_PATH}:/media
       - ${VOLUMES_PATH}/tdarr/transcode_cache:/temp
       - /lib/firmware/i915/:/lib/firmware/i915/
-    devices:
-      - /dev/dri:/dev/dri
+    #devices:
+    #  - /dev/dri:/dev/dri
     networks:
       - base-network
     labels:
