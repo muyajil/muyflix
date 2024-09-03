@@ -17,6 +17,7 @@ services:
       - ${MEDIA_PATH}/movies:/data/movies
       - ${MEDIA_PATH}/music:/data/music
       - ${MEDIA_PATH}/photos:/data/photos
+      - ${MEDIA_PATH}/youtube:/data/youtube
       - ${VOLUMES_PATH}/plex/transcode:/transcode
     restart: unless-stopped
   # END PLEX
