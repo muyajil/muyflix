@@ -7,10 +7,10 @@ services:
     environment:
       PUID: 1000
       PGID: 1000
-      VERSION: 1.40.2.8395-c67dce28e
+      VERSION: 1.40.5.8921-836b34c27
       UMASK_SET: 022 #optional
-#    devices:
-#      - /dev/dri:/dev/dri
+    devices:
+      - /dev/dri:/dev/dri
     volumes:
       - ${VOLUMES_PATH}/plex/library:/config
       - ${MEDIA_PATH}/tv:/data/tvshows
@@ -230,6 +230,14 @@ services:
     labels:
       - "com.centurylinklabs.watchtower.enable=false"
   # END TDARR
+  # START YOUTUBE DL
+  youtube-dl:
+    image: "kmb32123/youtube-dl-server"
+    volumes:
+      - ${VOLUMES_PATH}/youtube-dl:/youtube-dl
+      - ${MEDIA_PATH}:/media
+    restart: always
+  # END YOUTUBE DL
 networks:
   base-network:
     external: true
