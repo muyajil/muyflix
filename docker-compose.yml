@@ -234,8 +234,13 @@ services:
   youtube-dl:
     image: "kmb32123/youtube-dl-server"
     volumes:
-      - ${VOLUMES_PATH}/youtube-dl:/youtube-dl
-      - ${MEDIA_PATH}:/media
+      - ${MEDIA_PATH}/youtube:/youtube-dl
+    environment:
+      VIRTUAL_HOST: yt.${TLD}
+      LETSENCRYPT_HOST: yt.${TLD}
+      VIRTUAL_PORT: 8080
+    networks:
+      - base-network
     restart: always
   # END YOUTUBE DL
 networks:
