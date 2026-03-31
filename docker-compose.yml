@@ -21,27 +21,26 @@ services:
       - ${VOLUMES_PATH}/plex/transcode:/transcode
     restart: unless-stopped
   # END PLEX
-  # START OVERSEERR
-  overseerr:
-    image: lscr.io/linuxserver/overseerr:latest
+  # START SEERR
+  seerr:
+    image: ghcr.io/seerr-team/seerr:latest
+    init: true
     environment:
-      PUID: 1000
-      PGID: 1000
+      TZ: Europe/Zurich
       LOG_LEVEL: debug
-      TZ: Eruope/Zurich
-      VIRTUAL_HOST: overseerr.${TLD},ombi.${TLD}
-      LETSENCRYPT_HOST: overseerr.${TLD},ombi.${TLD}
+      VIRTUAL_HOST: seerr.${TLD},overseerr.${TLD},ombi.${TLD}
+      LETSENCRYPT_HOST: seerr.${TLD},overseerr.${TLD},ombi.${TLD}
       VIRTUAL_PORT: 5055
     restart: unless-stopped
     volumes:
-      - ${VOLUMES_PATH}/overseerr:/config
+      - ${VOLUMES_PATH}/seerr:/app/config
     depends_on:
       - radarr
       - sonarr
       - plex
     networks:
       - base-network
-  # END OVERSEERR
+  # END SEERR
   # START SONARR
   sonarr:
     image: linuxserver/sonarr:latest
