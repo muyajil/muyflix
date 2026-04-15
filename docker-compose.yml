@@ -7,7 +7,7 @@ services:
     environment:
       PUID: 1000
       PGID: 1000
-      VERSION: 1.41.6.9685-d301f511a
+      VERSION: 1.43.1.10611-1e34174b1
       UMASK_SET: 022 #optional
     devices:
       - /dev/dri:/dev/dri
@@ -199,7 +199,7 @@ services:
     ports:
     #   - 8265:8265 # webUI port
       - 8266:8266 # server port
-    cpuset: 0,1,2,3,4,5,6,7,8,9,10,11
+    cpuset: 0,1,2,3
     environment:
       TZ: Europe/London
       PUID: 1000
